@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clinic Appointment System</title>
+  <meta name="description" content="A simple appointment system for a health clinic, built for PROG2004 Assignment 1.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-top">
+      <div>
+        <h1>Clinic Appointment System</h1>
+        <p class="subtitle">PROG2004 Object Oriented Programming - Assignment 1</p>
+      </div>
+      <p class="today" id="today-label">Today</p>
+    </div>
+
+    <nav class="container nav" aria-label="Sections">
+      <a class="nav-item" href="#overview" data-view="overview">Overview</a>
+      <a class="nav-item" href="#book" data-view="book">Book</a>
+      <a class="nav-item" href="#appointments" data-view="appointments">
+        Appointments <span class="nav-count" id="nav-count">0</span>
+      </a>
+      <a class="nav-item" href="#team" data-view="team">Team</a>
+    </nav>
+  </header>
+
+  <main class="container main">
+    <div class="page-head">
+      <h2 id="view-title">Overview</h2>
+      <div class="page-actions">
+        <button class="btn btn-secondary" type="button" id="reset-demo">Reset demo</button>
+        <button class="btn btn-primary" type="button" data-go="book">+ New appointment</button>
+      </div>
+    </div>
+
+    <section class="view" id="view-overview" data-view-panel="overview">
+      <div class="intro">
+        <div class="intro-copy">
+          <h3>Welcome to the clinic</h3>
+          <p id="hero-summary"></p>
+        </div>
+        <div id="hero-next" class="next-box"></div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-label">Appointments today</span>
+          <span class="stat-value" id="stat-appointments">0</span>
+          <span class="stat-note">Across all professionals</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Free slots</span>
+          <span class="stat-value" id="stat-free">0</span>
+          <span class="stat-note" id="stat-capacity">Out of 112 slots</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Health professionals</span>
+          <span class="stat-value" id="stat-professionals">0</span>
+          <span class="stat-note">Four specialities</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Patients today</span>
+          <span class="stat-value" id="stat-patients">0</span>
+          <span class="stat-note">Unique mobile numbers</span>
+        </div>
+      </div>
+
+      <div class="columns">
+        <section class="card">
+          <div class="card-head">
+            <h3>Today's appointments</h3>
+            <a href="#appointments">View all</a>
+          </div>
+          <div id="overview-timeline"></div>
+        </section>
+
+        <section class="card">
+          <div class="card-head">
+            <h3>Health professionals</h3>
+            <a href="#team">View all</a>
+          </div>
+          <div id="overview-team"></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="view" id="view-book" data-view-panel="book" hidden>
+      <div class="book-layout">
+        <form id="booking-form" class="card" novalidate>
+          <h3>1. Choose a health professional</h3>
+          <div id="professional-picker" class="professional-picker"></div>
+          <p class="field-error" id="professional-error" role="alert"></p>
+
+          <h3>2. Choose a time</h3>
+          <p class="hint" id="slot-hint">Select a health professional to see available times.</p>
+          <div id="slot-picker"></div>
+          <p class="field-error" id="slot-error" role="alert"></p>
+
+          <h3>3. Patient details</h3>
+          <div class="field-grid">
+            <label class="field" for="patient-name">Full name
+              <input id="patient-name" name="patientName" type="text" autocomplete="name" placeholder="e.g. John Smith">
+              <span class="field-error" id="name-error"></span>
+            </label>
+            <label class="field" for="patient-mobile">Mobile number
+              <input id="patient-mobile" name="mobile" type="tel" inputmode="tel" autocomplete="tel" placeholder="e.g. 0412 345 678">
+              <span class="field-error" id="mobile-error"></span>
+            </label>
+          </div>
+        </form>
+
+        <aside class="card summary">
+          <h3>Appointment summary</h3>
+          <dl class="summary-list">
+            <div class="summary-row">
+              <dt>Professional</dt>
+              <dd id="summary-professional" class="is-empty">Not selected</dd>
+            </div>
+            <div class="summary-row">
+              <dt>Time</dt>
+              <dd id="summary-time" class="is-empty">Not selected</dd>
+            </div>
+            <div class="summary-row">
+              <dt>Patient</dt>
+              <dd id="summary-patient" class="is-empty">Not selected</dd>
+            </div>
+            <div class="summary-row">
+              <dt>Mobile</dt>
+              <dd id="summary-mobile" class="is-empty">Not selected</dd>
+            </div>
+          </dl>
+          <button class="btn btn-primary full" type="submit" form="booking-form" id="confirm-booking">
+            Confirm booking
+          </button>
+          <p class="small">Appointments last 30 minutes. You can cancel a booking at any time.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="view" id="view-appointments" data-view-panel="appointments" hidden>
+      <div class="card">
+        <div class="toolbar">
+          <input id="appointment-search" type="search" placeholder="Search by patient name, mobile or professional" aria-label="Search appointments">
+          <select id="professional-filter" aria-label="Filter by health professional"></select>
+          <span class="count" id="appointment-count">0 appointments</span>
+        </div>
+        <div id="appointment-list" class="appointment-list"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-team" data-view-panel="team" hidden>
+      <p class="intro-text">The clinic has seven health professionals across four specialities. Every appointment is 30 minutes long.</p>
+      <div id="team-grid" class="team-grid"></div>
+    </section>
+
+    <p class="storage-note" id="storage-note"></p>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>PROG2004 Assignment 1 - Clinic Appointment System</p>
+    </div>
+  </footer>
+
+  <dialog id="cancel-dialog" class="dialog" aria-labelledby="cancel-dialog-title">
+    <h3 id="cancel-dialog-title">Cancel this appointment?</h3>
+    <p id="cancel-dialog-text"></p>
+    <div class="dialog-actions">
+      <button class="btn btn-secondary" type="button" data-close-dialog>Keep appointment</button>
+      <button class="btn btn-danger" type="button" id="confirm-cancel">Cancel appointment</button>
+    </div>
+  </dialog>
+
+  <dialog id="reset-dialog" class="dialog" aria-labelledby="reset-dialog-title">
+    <h3 id="reset-dialog-title">Restore demo data?</h3>
+    <p>This replaces all appointments on this device with the original demo schedule. Your current bookings will be removed.</p>
+    <div class="dialog-actions">
+      <button class="btn btn-secondary" type="button" data-close-dialog>Keep my data</button>
+      <button class="btn btn-primary" type="button" id="confirm-reset">Restore demo data</button>
+    </div>
+  </dialog>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <script src="model.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
